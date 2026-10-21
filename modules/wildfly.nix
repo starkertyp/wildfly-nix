@@ -24,7 +24,7 @@ let
     fi
 
     deploy="$state/deployments"
-    rm -f "$deploy"/*.war "$deploy"/*.dodeploy
+    rm -f "$deploy"/*.war "$deploy"/*.dodeploy "$deploy"/*.jar
     ${lib.concatMapStringsSep "\n" (deployment:
       let
         path = lib.escapeShellArg (toString (deploymentPath deployment));
@@ -35,6 +35,15 @@ let
           *) echo "services.wildfly.deployments: ${toString (deploymentPath deployment)} is not a .war" >&2; exit 1 ;;
         esac
       '') cfg.deployments}
+    ${lib.concatMapStringsSep "\n" (driver: ''
+      for jar in ${lib.escapeShellArg (toString driver)}/share/java/*.jar; do
+        if [ ! -e "$jar" ]; then
+          echo "services.wildfly.jdbcDrivers: ${toString driver} has no share/java/*.jar" >&2
+          exit 1
+        fi
+        ln -sfn "$jar" "$deploy"/
+      done
+    '') cfg.jdbcDrivers}
   '';
 in
 {
@@ -121,6 +130,16 @@ in
       '';
     };
 
+    jdbcDrivers = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [ ];
+      description = ''
+        JDBC driver packages (e.g. pkgs.postgresql_jdbc) whose `$out/share/java/*.jar`
+        are symlinked into the managed deployments dir, so WildFly auto-detects them
+        as JDBC drivers.
+      '';
+    };
+
     extraJavaOptions = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -147,7 +166,7 @@ in
       description = "WildFly application server";
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
-      restartTriggers = [ cfg.package ] ++ map deploymentPath cfg.deployments;
+      restartTriggers = [ cfg.package ] ++ map deploymentPath cfg.deployments ++ cfg.jdbcDrivers;
 
       serviceConfig = {
         User = cfg.user;
