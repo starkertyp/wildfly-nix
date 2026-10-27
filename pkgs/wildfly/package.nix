@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "41.0.1.Final";
+  version = "42.0.0.Final";
 
   # Distribution scripts keep their #!/bin/sh shebangs; they only run inside the FHS env.
   unwrapped = stdenv.mkDerivation {
@@ -16,7 +16,7 @@ let
 
     src = fetchurl {
       url = "https://github.com/wildfly/wildfly/releases/download/${version}/wildfly-${version}.tar.gz";
-      hash = "sha256-JuJ5CPXHINU/JKu5X5V10E9YBRDl2F+tUTzamt6BGcM=";
+      hash = "sha256-bC5QuPPiwMOtj1JB4YJ28Sv9Pm43t1Dj/h1s4d0oAM4=";
     };
 
     dontPatchShebangs = true;
