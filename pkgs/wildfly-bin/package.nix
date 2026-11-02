@@ -2,7 +2,7 @@
 , stdenv
 , fetchurl
 , buildFHSEnv
-, jdk21
+, jdk21_headless
 , writeShellScript
 }:
 
@@ -31,7 +31,7 @@ buildFHSEnv {
   name = "wildfly-bin";
 
   targetPkgs = pkgs: [
-    pkgs.jdk21
+    pkgs.jdk21_headless
     pkgs.bash
     pkgs.coreutils
     pkgs.gnused
@@ -42,7 +42,7 @@ buildFHSEnv {
   ];
 
   runScript = writeShellScript "wildfly-bin-start" ''
-    export JAVA_HOME=${jdk21}
+    export JAVA_HOME=${jdk21_headless}
     exec ${unwrapped}/bin/standalone.sh "$@"
   '';
 

@@ -3,6 +3,7 @@
 , fetchurl
 , maven
 , jdk21
+, jdk21_headless
 , jre-generate-cacerts
 , buildFHSEnv
 , writeShellScript
@@ -28,6 +29,7 @@ let
     # jre-generate-cacerts must not be in nativeBuildInputs: stdenv then runs it
     # during setup, where it fails. It is only referenced by path below.
     nativeBuildInputs = [ maven ];
+    # Build keeps jdk21: mavenDeps is a fixed-output derivation, don't touch its JAVA_HOME.
     env.JAVA_HOME = jdk21;
 
     buildPhase = ''
@@ -99,7 +101,7 @@ buildFHSEnv {
   name = "wildfly";
 
   targetPkgs = pkgs: [
-    pkgs.jdk21
+    pkgs.jdk21_headless
     pkgs.bash
     pkgs.coreutils
     pkgs.gnused
@@ -110,7 +112,7 @@ buildFHSEnv {
   ];
 
   runScript = writeShellScript "wildfly-start" ''
-    export JAVA_HOME=${jdk21}
+    export JAVA_HOME=${jdk21_headless}
     exec ${unwrapped}/bin/standalone.sh "$@"
   '';
 
