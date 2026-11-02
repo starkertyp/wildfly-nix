@@ -53,7 +53,7 @@ in
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.callPackage ../pkgs/wildfly/package.nix { };
-      description = "WildFly package to use.";
+      description = "WildFly package to use. Defaults to the build from source; the prebuilt upstream distribution is available as wildfly-bin.";
     };
 
     user = lib.mkOption {

@@ -1,17 +1,21 @@
 {
-  description = "WildFly 41.0.1.Final on JDK 21 for NixOS";
+  description = "WildFly 42.0.0.Final on JDK 21 for NixOS";
 
   inputs.nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.zst";
 
   outputs = { self, nixpkgs }: {
-    packages = builtins.mapAttrs (system: pkgs: {
-      wildfly = pkgs.callPackage ./pkgs/wildfly/package.nix { };
-
-      default = self.packages.${system}.wildfly;
-    }) nixpkgs.legacyPackages;
+    packages = builtins.mapAttrs (system: pkgs:
+      let
+        wildfly = pkgs.callPackage ./pkgs/wildfly/package.nix { };
+        wildfly-bin = pkgs.callPackage ./pkgs/wildfly-bin/package.nix { };
+      in {
+        inherit wildfly wildfly-bin;
+        default = wildfly;
+      }) nixpkgs.legacyPackages;
 
     overlays.default = final: prev: {
       wildfly = final.callPackage ./pkgs/wildfly/package.nix { };
+      wildfly-bin = final.callPackage ./pkgs/wildfly-bin/package.nix { };
     };
 
     nixosModules.wildfly = import ./modules/wildfly.nix;

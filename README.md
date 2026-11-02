@@ -1,6 +1,6 @@
 # WildFly on NixOS
 
-NixOS module and package for WildFly 41.0.1.Final on JDK 21. WildFly is started
+NixOS module and packages for WildFly 42.0.0.Final on JDK 21. WildFly is started
 inside an FHS environment (`buildFHSEnv`), because its distribution scripts and
 modules expect standard FHS paths.
 
@@ -34,12 +34,19 @@ modules expect standard FHS paths.
 NOTE: This uses stable nixpkgs (currently `26.05`) as people who want to run wildfly will likely value stability.
 Override `inputs.wildfly.inputs.nixpkgs` to change this.
 
+## Packages
+
+| Package | Description |
+| --- | --- |
+| `wildfly` (default) | Built from the upstream sources. The full Maven reactor is compiled and the server distribution is provisioned with Galleon, which takes around half an hour and downloads a large pinned Maven dependency set. |
+| `wildfly-bin` | The unmodified upstream release tarball. Same server, nothing is compiled. |
+
 ## Options
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `services.wildfly.enable` | `false` | Enable the service |
-| `services.wildfly.package` | WildFly package from this flake | WildFly package |
+| `services.wildfly.package` | `wildfly` built from source | WildFly package |
 | `services.wildfly.user` / `group` | `"wildfly"` | Service user and group |
 | `services.wildfly.stateDir` | `"/var/lib/wildfly"` | State directory |
 | `services.wildfly.config` | `"standalone.xml"` | Configuration file name |
@@ -86,6 +93,7 @@ is then selectable by that name.
 The packaging code in this repository (flake, module, tests, package definition) is
 licensed under the EUPL-1.2 (see [LICENSE](LICENSE)).
 
-WildFly itself is shipped unmodified as the upstream release and is licensed under
-the Apache License 2.0 (see `LICENSE.txt` in the WildFly release); bundled
-third-party modules keep their own licences.
+WildFly itself is licensed under the Apache License 2.0 (see `LICENSE.txt` in the
+server distribution); bundled third-party modules keep their own licences. The
+`wildfly` package builds it from the upstream sources, `wildfly-bin` ships the
+upstream release unmodified.
