@@ -63,7 +63,7 @@ let
 
     dontFixup = true;
     outputHashMode = "recursive";
-    outputHash = "sha256-T6ycb8W8/k7hfY8HofTyOHqZ1uTR9LnTzKu+9NHosac=";
+    outputHash = "sha256-9pUl8RptgIqtz3ZQAgA5fd34XObadN+bc3P0TlR21og=";
   };
 
   unwrapped = stdenv.mkDerivation {
