@@ -28,7 +28,8 @@ let
   };
 in
 buildFHSEnv {
-  name = "wildfly-bin";
+  # modules/wildfly.nix execs cfg.package/bin/wildfly; buildFHSEnv names the entry script after `name`.
+  name = "wildfly";
 
   targetPkgs = pkgs: [
     pkgs.jdk21_headless

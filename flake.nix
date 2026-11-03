@@ -23,6 +23,12 @@
 
     checks = builtins.mapAttrs (system: pkgs: {
       default = import ./tests/default.nix { inherit pkgs; };
+      wildfly-bin-binary =
+        let bin = pkgs.callPackage ./pkgs/wildfly-bin/package.nix { };
+        in pkgs.runCommand "wildfly-bin-binary" { } ''
+          test -x ${bin}/bin/wildfly
+          touch $out
+        '';
     }) nixpkgs.legacyPackages;
   };
 }
